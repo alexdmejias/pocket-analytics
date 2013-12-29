@@ -1,0 +1,26 @@
+{
+  "name": "personal",
+  "version": "0.0.0",
+  "description": "ERROR: No README.md file found!",
+  "main": "index.php",
+  "dependencies": {
+    "grunt": "~0.4.1"
+  },
+  "devDependencies": {
+    "grunt-contrib-compass": "~0.6.0",
+    "grunt-rsync": "~0.2.1",
+    "grunt-contrib-watch": "~0.5.3",
+    "matchdep": "~0.3.0",
+    "grunt": "~0.4.1",
+    "grunt-growl": "~0.1.5"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/amejias101/bare-bones.git"
+  },
+  "author": "",
+  "license": "BSD"
+}
