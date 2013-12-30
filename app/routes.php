@@ -1,5 +1,4 @@
 <?php
 
-Route::get('/', 'PocketController@index');
+Route::get('/', 'PocketController@getIndex');
 Route::controller('pocket', 'PocketController');
-Route::controller('count', 'CountController');

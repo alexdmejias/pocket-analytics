@@ -74,9 +74,8 @@ class PocketController extends BaseController {
 		echo $result;
 	}
 
-	public function _retrieve_articles($article_count = 10) {
+	public function getArticles($article_count = 10) {
 		$config = $this->_config();
-
 		$retrive_url = 'https://getpocket.com/v3/get?count='. $article_count;
 
         $data = array(
@@ -107,41 +106,27 @@ class PocketController extends BaseController {
 
 		$list = json_decode($result);
 
-		return $list->list;
-
+		return (array)$list->list;
 	}
 
-	public function _get_total_count() {
-		$list = $this->_retrieve_articles(10000);
+	public function getTotal() {
+		$list = $this->getArticles(10000);
 
-		return count((array)$list);
+		return count($list);
 	}
 
-	public function getArticles($article_count = 10) {
-		$list = $this->_retrieve_articles($article_count);
-		$list_count = count((array)$list);
-		$data['list'] = $list;
-		$data['count'] = $list_count;
-		$this->load->view('list', $data);
+	public function getCounts($q) {
+		return DB::table('pockets')->orderBy('created_at','desc')->take($q)->get();
 	}
 
-	public function getFull() {
-		$list = $this->_retrieve_articles(10000);
-
-		$data['list'] = $list;
-		$data['count'] = count((array)$list);
-		// $this->load->view('list', $data);
-		return View::make('pocket', ['data'=> $data]);
+	public function getInsert() {
+		$total = $this->getTotal();
+		Pocket::create_total($total);
+		return $total;
 	}
 
-	// public function getIndex() {
-	public function index() {
-	  	return View::make('hello');
-
+	public function getIndex() {
+		return View::make('home');
 	}
-
-	/*public function getProfile() {
-		return $this->_config();
-	}*/
 
 }
