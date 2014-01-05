@@ -1,59 +1,62 @@
-(function($) {
-	$.get('/pocket/counts/30', function(data) {
-		dataLoaded(data);
-	}, 'json');
+project = {
+	jsonData : '',
+ 	chartInfo : {},
+ 	chartLabels : [],
+ 	chartData : [],
 
-	var jsonData,
-		chartLabels,
-		chartData,
-		chartOptions;
-
-	extractData = function(data) {
-		chartLabels = [];
-		chartData = [];
-		for(var i = 0; i < jsonData.length; i++) {
-			chartLabels.push(jsonData[i].created_at);
-			chartData.push(jsonData[i].total);
+	extractData : function(data) {
+		project.chartLabels = [];
+		project.chartData = [];
+		for(var i = 0; i < project.jsonData.length; i++) {
+			project.chartLabels.push(project.jsonData[i].created_at);
+			project.chartData.push(project.jsonData[i].total);
 		}
-		console.log(chartLabels, chartData);
+
+		// project.chartData.splice(0,1);
+		// project.chartLabels.splice(0,1);
+	},
+
+    genChartOptions : function(labels, data) {
+    	project.chartInfo = {
+			data: {
+				labels : labels,
+				datasets : [
+					{
+						fillColor : "rgba(220,220,220,0.5)",
+						strokeColor : "rgba(220,220,220,1)",
+						pointColor : "rgba(220,220,220,1)",
+						pointStrokeColor : "#fff",
+						data : data
+					}
+				]
+		    },
+			options : {
+				pointDotRadius : 3,
+				scaleOverride : true,
+				scaleSteps : Math.max.apply(null, data) - Math.min.apply(null, data),
+				scaleStepWidth : 1,
+				scaleStartValue : Math.min.apply(null, data)
+			}
+		}
+    },
+
+    makeChart : function(el, data) {
+	    return new Chart(document.getElementById(el).getContext("2d")).Line(data.data, data.options);
+    },
+
+	dataLoaded : function(data) {
+		project.jsonData = data;
+		project.extractData(project.jsonData.reverse());
+		project.genChartOptions(project.chartLabels, project.chartData);
+		project.makeChart('chart', project.chartInfo);
+	},
+
+	makeRequest : function(entries) {
+		$.get('/pocket/counts/'+entries, function(data) {
+			project.dataLoaded(data);
+		}, 'json');
 	}
 
-    function genChartOptions(labels, points) {
-    	chartOptions = {
-			labels : labels,
-			datasets : [
-				{
-					fillColor : "rgba(220,220,220,0.5)",
-					strokeColor : "rgba(220,220,220,1)",
-					pointColor : "rgba(220,220,220,1)",
-					pointStrokeColor : "#fff",
-					data : points
-				}
-			],
-	    }
-    };
+}
 
-	function dataLoaded(data) {
-		jsonData = data;
-
-		extractData(jsonData.reverse());
-		genChartOptions(chartLabels, chartData);
-		makeChart('chart', chartOptions);
-	}
-
-	options = {
-		pointDotRadius : 3,
-		// scaleOverride : true,
-		//Number - The number of steps in a hard coded scale
-		// scaleSteps : 30,
-		//Number - The value jump in the hard coded scale
-		// scaleStepWidth : 5,
-		//Number - The scale starting value
-		// scaleStartValue : 400,
-	};
-
-    function makeChart(el, data) {
-	    return new Chart(document.getElementById(el).getContext("2d")).Line(data, options);
-    }
-
-})(jQuery)
+project.makeRequest();
