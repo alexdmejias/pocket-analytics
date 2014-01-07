@@ -6,9 +6,9 @@ class PocketController extends BaseController {
 		$config = array(
 			'request_url' => 'https://getpocket.com/v3/oauth/request',
 			'authorize_url' => 'https://getpocket.com/v3/oauth/authorize',
-			'consumer_key' => '21250-15764f0901f9abc158cfafe6',
-			'access_token' => '56f54cc1-bb79-7d46-de6e-fb4af0',
-			'redirect_uri' => 'http://pocket.dev/index.php/pocket/callback'
+			'consumer_key' => Config::get('pocket.pocket.consumer_key'),
+			'access_token' => Config::get('pocket.pocket.access_token'),
+			'redirect_uri' => Config::get('pocket.pocket.redirect_uri')
 		);
 
 		return $config;
@@ -18,7 +18,7 @@ class PocketController extends BaseController {
 
 		$config = $this->_config();
 
-		$config['request_url'] = 'https://getpocket.com/v3/oauth/request';
+		$request_url = 'https://getpocket.com/v3/oauth/request';
 
 		$data = array(
 			'consumer_key' => $config['consumer_key'],
@@ -115,7 +115,7 @@ class PocketController extends BaseController {
 		return count($list);
 	}
 
-	public function getCounts($q) {
+	public function getCounts($q = 10) {
 		return DB::table('pockets')->orderBy('created_at','desc')->take($q)->get();
 	}
 
