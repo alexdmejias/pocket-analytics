@@ -3,6 +3,7 @@ project = {
  	chartInfo : {},
  	chartLabels : [],
  	chartData : [],
+ 	timer : null,
 
 	extractData : function(data) {
 		project.chartLabels = [];
@@ -55,8 +56,16 @@ project = {
 		$.get('/pocket/counts/'+entries, function(data) {
 			project.dataLoaded(data);
 		}, 'json');
+		console.log('fired request');
 	}
 
 }
 
-project.makeRequest(30);
+$(window).on('load resize', function() {
+	clearTimeout(project.timer);
+	project.timer = setTimeout(function() {
+		$('canvas').attr('width', $(window).width());
+		project.makeRequest();
+	}, 300);
+
+})
