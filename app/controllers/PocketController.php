@@ -121,8 +121,9 @@ class PocketController extends BaseController {
 
 	public function getInsert() {
 		$total = $this->getTotal();
-		Pocket::create_total($total);
-		return $total;
+		Pocket::create(array('total'=>$total));
+
+		return('record inserted');
 	}
 
 	public function getIndex() {
