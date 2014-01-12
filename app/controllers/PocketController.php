@@ -119,11 +119,22 @@ class PocketController extends BaseController {
 		return DB::table('pockets')->orderBy('created_at','desc')->take($q)->get();
 	}
 
-	public function getInsert() {
+	public function getInsert($key = '') {
 		$total = $this->getTotal();
-		Pocket::create(array('total'=>$total));
 
-		return('record inserted');
+		$pocket = new Pocket;
+
+		$pocket->fill(array('total' => $total));
+
+		if ((date('i') == 00) || ($key == Config::get('pocket.pocket.force_key'))) {
+			if (!$pocket->save()) {
+				return 'error, could not save';
+			} else {
+				return 'saved';
+			}
+		} else {
+			return "wrong time or key. key used was '$key' and time is " . date('i');
+		}
 	}
 
 	public function getIndex() {
