@@ -4,15 +4,17 @@ app = {
  	data : {},
  	timer : null,
  	totalData : null,
- 	defaultRequestNum : 30,
+ 	defaultRequestNum : 24,
  	hasCanvas: false,
 
 	prepareData : function(data) {
 		app.data.labels = [];
 		app.data.totals = [];
 		for(var i = 0; i < app.json.length; i++) {
-			app.data.labels.push('['+i+']'+app.json[i].created_at);
-			app.data.totals.push(app.json[i].total);
+			total = app.json[i].total;
+
+			app.data.labels.push('['+i+'] '+ app.json[i].created_at.substr(5,8) + ' hours ['+total+']');
+			app.data.totals.push(total);
 		}
 	},
 
@@ -41,7 +43,7 @@ app = {
     },
 
     makeCanvas : function() {
-    	$('body').append('<canvas id="chart" height="700" width="700" />');
+    	$('body').append('<canvas id="chart" height="900" width="700" />');
     	app.hasCanvas = true;
     },
 
@@ -63,7 +65,7 @@ app = {
 		if((0 > index1) || (0 > index2)) {
 			alert('not enough data. index1 = '+index1 + ' index2='+index2);
 		} else {
-			change = app.data.totals[index2] - app.data.totals[index1];
+			change = app.data.totals[index1] - app.data.totals[index2];
 			if(change > 0) {
 				change = '+'+change;
 			}
@@ -89,8 +91,9 @@ app = {
 		}
 		app.renderChart('chart', app.chartInfo);
 		app.getTotalData();
-		app.showChange('.changeFirstLast', 0, app.totalData - 1);
-		app.showChange('.lastTwo', app.totalData - 2, app.totalData - 1);
+		$('.stats').children('.total').children('span').text(app.totalData);
+		app.showChange('.changeFirstLast', app.totalData - 1, 0);
+		app.showChange('.lastTwo', app.totalData - 1, app.totalData - 2);
 	},
 
 	makeRequest: function(num) {
@@ -102,7 +105,7 @@ app = {
 
 }
 
-app.makeRequest(30);
+app.makeRequest(app.defaultRequestNum);
 
 $(window).on('resize', function() {
 	clearTimeout(app.timer);
