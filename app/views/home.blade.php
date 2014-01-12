@@ -6,36 +6,14 @@
 </head>
 <body>
 <style>
-				path {
-				stroke: steelblue;
-				stroke-width: 1;
-				fill: none;
-			}
-
-			.axis {
-			  shape-rendering: crispEdges;
-			}
-
-			.x.axis line {
-			  stroke: lightgrey;
-			}
-
-			.x.axis .minor {
-			  stroke-opacity: .5;
-			}
-
-			.x.axis path {
-			  display: none;
-			}
-
-			.y.axis line, .y.axis path {
-			  fill: none;
-			  stroke: #000;
-			}
+	body {margin:0;}
 </style>
-<ol>
-</ol>
-	<canvas id="chart" height="700" width="700"></canvas>
+<ul class="stats">
+	<li class="highest">highest {{$highest->total}} on {{$highest->created_at}}</li>
+	<li class="changeFirstLast">change in the first and last points: <span></span></li>
+	<li class="lastTwo">change in the last two points: <span></span></li>
+</ul>
+
 	<script src="<?php echo asset('/bower_components/jquery/jquery.js'); ?>"></script>
 	<script src="<?php echo asset('/bower_components/chartjs/Chart.js'); ?>"></script>
 	<script src="<?php echo asset('/library/js/app.js'); ?>"></script>

@@ -1,24 +1,23 @@
-project = {
-	jsonData : '',
+app = {
+	json : '',
  	chartInfo : {},
- 	chartLabels : [],
- 	chartData : [],
+ 	data : {},
  	timer : null,
+ 	totalData : null,
+ 	defaultRequestNum : 30,
+ 	hasCanvas: false,
 
-	extractData : function(data) {
-		project.chartLabels = [];
-		project.chartData = [];
-		for(var i = 0; i < project.jsonData.length; i++) {
-			project.chartLabels.push(project.jsonData[i].created_at);
-			project.chartData.push(project.jsonData[i].total);
+	prepareData : function(data) {
+		app.data.labels = [];
+		app.data.totals = [];
+		for(var i = 0; i < app.json.length; i++) {
+			app.data.labels.push('['+i+']'+app.json[i].created_at);
+			app.data.totals.push(app.json[i].total);
 		}
-
-		// project.chartData.splice(0,1);
-		// project.chartLabels.splice(0,1);
 	},
 
     genChartOptions : function(labels, data) {
-    	project.chartInfo = {
+    	app.chartInfo = {
 			data: {
 				labels : labels,
 				datasets : [
@@ -41,31 +40,73 @@ project = {
 		}
     },
 
-    makeChart : function(el, data) {
+    makeCanvas : function() {
+    	$('body').append('<canvas id="chart" height="700" width="700" />');
+    	app.hasCanvas = true;
+    },
+
+    resizeCanvas : function() {
+    	$chart = $('#chart');
+    	$chart.attr('width', ($(window).width() - 50));
+    	app.renderChart('chart', app.chartInfo);
+    },
+
+    renderChart : function(el, data) {
 	    return new Chart(document.getElementById(el).getContext("2d")).Line(data.data, data.options);
     },
 
-	dataLoaded : function(data) {
-		project.jsonData = data;
-		project.extractData(project.jsonData.reverse());
-		project.genChartOptions(project.chartLabels, project.chartData);
-		project.makeChart('chart', project.chartInfo);
+	showChange: function(el, index1, index2){
+		if(!app.totalData) {
+			app.getTotalData()
+		}
+
+		if((0 > index1) || (0 > index2)) {
+			alert('not enough data. index1 = '+index1 + ' index2='+index2);
+		} else {
+			change = app.data.totals[index2] - app.data.totals[index1];
+			if(change > 0) {
+				change = '+'+change;
+			}
+		}
+		$('.stats').children(el).children('span').text(change);
+		return 'datapoints user were '+index2+'-'+index1;
 	},
 
-	makeRequest : function(entries) {
-		$.get('/pocket/counts/'+entries, function(data) {
-			project.dataLoaded(data);
-		}, 'json');
-		console.log('fired request');
+	getTotalData : function() {
+		app.totalData = app.data.totals.length;
+
+		return app.totalData;
+	},
+
+	requestComplete : function(data) {
+		app.json = data;
+		app.prepareData(app.json.reverse());
+		app.genChartOptions(app.data.labels, app.data.totals);
+
+		if (!app.hasCanvas) {
+			app.makeCanvas();
+			app.resizeCanvas();
+		}
+		app.renderChart('chart', app.chartInfo);
+		app.getTotalData();
+		app.showChange('.changeFirstLast', 0, app.totalData - 1);
+		app.showChange('.lastTwo', app.totalData - 2, app.totalData - 1);
+	},
+
+	makeRequest: function(num) {
+		return $.ajax({
+			url: '/pocket/counts/'+num,
+		}).promise().done(app.requestComplete);
+
 	}
 
 }
 
-$(window).on('load resize', function() {
-	clearTimeout(project.timer);
-	project.timer = setTimeout(function() {
-		$('canvas').attr('width', $(window).width());
-		project.makeRequest();
-	}, 300);
+app.makeRequest(30);
 
+$(window).on('resize', function() {
+	clearTimeout(app.timer);
+	app.timer = setTimeout(function() {
+		app.resizeCanvas();
+	}, 300);
 })

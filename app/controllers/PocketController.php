@@ -127,7 +127,9 @@ class PocketController extends BaseController {
 	}
 
 	public function getIndex() {
-		return View::make('home');
+		$highest = Pocket::orderBy('total', 'desc')->first();
+
+		return View::make('home')->with('highest', $highest);
 	}
 
 }
