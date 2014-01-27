@@ -126,7 +126,9 @@ class PocketController extends BaseController {
 
 		$pocket->fill(array('total' => $total));
 
-		if ((date('i') == 00) || ($key == Config::get('pocket.pocket.force_key'))) {
+		$last_save = Pocket::orderBy('id', 'desc')->first();
+
+		if ($last_save->total != $total) {
 			if (!$pocket->save()) {
 				return 'error, could not save';
 			} else {

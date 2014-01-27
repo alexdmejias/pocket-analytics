@@ -13,7 +13,7 @@ app = {
 		for(var i = 0; i < app.json.length; i++) {
 			total = app.json[i].total;
 
-			app.data.labels.push('['+i+'] '+ app.json[i].created_at.substr(5,8) + ' hours ['+total+']');
+			app.data.labels.push('['+i+'] '+ app.json[i].created_at.substr(5,11) + ' hours ['+total+']');
 			app.data.totals.push(total);
 		}
 	},
