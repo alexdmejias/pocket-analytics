@@ -12,6 +12,7 @@
 	<li class="highest">highest {{$highest->total}} on {{$highest->created_at}}</li>
 	<li class="lowest">lowest {{$lowest->total}} on {{$lowest->created_at}}</li>
 	<li class="total">Currently showing <span></span> data points</li>
+	<li class="latest">The last count was {{$latest->total}} ans was recorded at {{$latest->created_at}}</li>
 	<li class="changeFirstLast">change in the first and last points: <span></span></li>
 	<li class="lastTwo">change in the last two points: <span></span></li>
 </ul>
