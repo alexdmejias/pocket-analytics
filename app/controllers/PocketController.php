@@ -115,8 +115,8 @@ class PocketController extends BaseController {
 		return count($list);
 	}
 
-	public function getCounts($q = 10) {
-		return DB::table('pockets')->orderBy('created_at','desc')->take($q)->get();
+	public function getCounts($q = 10, $m = null) {
+		return Pocket::orderBy('created_at','desc')->take($q)->get();
 	}
 
 	public function getInsert($key = '') {
@@ -142,8 +142,9 @@ class PocketController extends BaseController {
 	public function getIndex() {
 		$highest = Pocket::orderBy('total', 'desc')->first();
 		$lowest = Pocket::orderBy('total')->first();
+		$latest = Pocket::orderBy('id', 'desc')->first();
 
-		return View::make('home')->with('highest', $highest)->with('lowest', $lowest);
+		return View::make('home')->with('highest', $highest)->with('lowest', $lowest)->with('latest', $latest);
 	}
 
 }
