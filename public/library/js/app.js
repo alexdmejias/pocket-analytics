@@ -1,24 +1,26 @@
-app = {
-	json : '',
- 	chartInfo : {},
- 	data : {},
- 	timer : null,
- 	totalData : null,
- 	defaultRequestNum : 24,
- 	hasCanvas: false,
+'use strict';
 
-	prepareData : function(data) {
+var app = {
+	json : '',
+	chartInfo : {},
+	data : {},
+	timer : null,
+	totalData : null,
+	defaultRequestNum : 24,
+	hasCanvas: false,
+
+	prepareData : function (data) {
 		app.data.labels = [];
 		app.data.totals = [];
-		for(var i = 0; i < app.json.length; i++) {
-			total = app.json[i].total;
+		for (var i = 0; i < app.json.length; i++) {
+			var total = app.json[i].total;
 
 			app.data.labels.push('['+i+'] '+ app.json[i].created_at.substr(5,11) + ' hours ['+total+']');
 			app.data.totals.push(total);
 		}
 	},
 
-    genChartOptions : function(labels, data) {
+    genChartOptions : function (labels, data) {
     	app.chartInfo = {
 			data: {
 				labels : labels,
@@ -42,22 +44,22 @@ app = {
 		}
     },
 
-    makeCanvas : function() {
+    makeCanvas : function () {
     	$('body').append('<canvas id="chart" height="900" width="700" />');
     	app.hasCanvas = true;
     },
 
-    resizeCanvas : function() {
+    resizeCanvas : function () {
     	$chart = $('#chart');
     	$chart.attr('width', ($(window).width() - 50));
     	app.renderChart('chart', app.chartInfo);
     },
 
-    renderChart : function(el, data) {
+    renderChart : function (el, data) {
 	    return new Chart(document.getElementById(el).getContext("2d")).Line(data.data, data.options);
     },
 
-	showChange: function(el, index1, index2){
+	showChange: function (el, index1, index2){
 		if(!app.totalData) {
 			app.getTotalData()
 		}
@@ -74,13 +76,13 @@ app = {
 		return 'datapoints user were '+index2+'-'+index1;
 	},
 
-	getTotalData : function() {
+	getTotalData : function () {
 		app.totalData = app.data.totals.length;
 
 		return app.totalData;
 	},
 
-	requestComplete : function(data) {
+	requestComplete : function (data) {
 		app.json = data;
 		app.prepareData(app.json.reverse());
 		app.genChartOptions(app.data.labels, app.data.totals);
@@ -96,20 +98,20 @@ app = {
 		app.showChange('.lastTwo', app.totalData - 1, app.totalData - 2);
 	},
 
-	makeRequest: function(num) {
+	makeRequest: function (num) {
 		return $.ajax({
-			url: '/pocket/counts/'+num,
+			url: '/pocket/multiple/'+num,
 		}).promise().done(app.requestComplete);
 
 	}
 
-}
+};
 
 app.makeRequest(app.defaultRequestNum);
 
-$(window).on('resize', function() {
+$(window).on('resize', function () {
 	clearTimeout(app.timer);
-	app.timer = setTimeout(function() {
+	app.timer = setTimeout(function () {
 		app.resizeCanvas();
 	}, 300);
-})
+});
