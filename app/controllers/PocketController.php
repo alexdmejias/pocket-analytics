@@ -129,13 +129,30 @@ class PocketController extends \BaseController {
 	 *
 	 * @return Response
 	 */
-	public function index() {
-		return Pocket::orderBy('created_at','desc')->take(10)->get();
-	}
-
-	public function getMultiple($q) {
+	public function index($q = 10) {
 		return Pocket::orderBy('created_at','desc')->take($q)->get();
 	}
+
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+/*	public function show($id)
+	{
+		$url = Pocket::where('id', $id)->take(1)->get();
+
+		return Response::json(array(
+			'error' => false,
+			'urls' => $url->toArray()),
+			200
+		);
+	}*/
+
+/*	public function getMultiple($q) {
+		return Pocket::orderBy('created_at','desc')->take($q)->get();
+	}*/
 
 	/**
 	 * Show the form for creating a new resource.
@@ -172,23 +189,6 @@ class PocketController extends \BaseController {
 		} else {
 			return "wrong time or key. key used was '$key' and time is " . date('i');
 		}
-	}
-
-	/**
-	 * Display the specified resource.
-	 *
-	 * @param  int  $id
-	 * @return Response
-	 */
-	public function show($id)
-	{
-		$url = Pocket::where('id', $id)->take(1)->get();
-
-		return Response::json(array(
-			'error' => false,
-			'urls' => $url->toArray()),
-			200
-		);
 	}
 
 	/**
