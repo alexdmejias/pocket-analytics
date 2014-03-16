@@ -14,7 +14,7 @@
     "tests"
   ],
   "dependencies": {
-    "chartjs": "*",
-    "jquery": "~2.0.3"
+    "angularjs": "*"
+    "d3": "~3.4.3"
   }
 }
